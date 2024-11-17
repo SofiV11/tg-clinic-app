@@ -17,6 +17,8 @@ services:
 
 #     Comment this if you are running in production
 #    command: ["npm", "run", "build"]
+    ports:
+          - "3000:3000"  # Проброс порта 3000 из контейнера на хост
 
     stop_signal: SIGINT
 
