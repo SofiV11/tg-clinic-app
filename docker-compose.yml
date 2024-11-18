@@ -10,10 +10,10 @@ services:
       - /var/app/medsync/:/home/node/app/dist
 
 #     Uncomment this if you are running in development
-#      - ./frontend:/home/node/app
+      - ./frontend:/home/node/app
 
 #     Uncomment this if you are running in development
-    command: ["npm", "run", "dev", "--host", "0.0.0.0"]
+    command: npm run dev -- --host 0.0.0.0
 
 #     Comment this if you are running in production
 #    command: ["npm", "run", "build"]
