@@ -3,26 +3,24 @@ version: "3"
 services:
   app:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+        context: ./frontend
+        dockerfile: Dockerfile
     working_dir: "/home/node/app"
     volumes:
-      # Для разработки: монтируем локальную директорию frontend в контейнер
-      - ./frontend:/home/node/app
-      # Для продакшена: монтируем директорию dist (раскомментируйте, если нужно)
-      # - /var/app/medsync/:/home/node/app/dist
+      - /var/app/medsync/:/home/node/app/dist
+
+#     Uncomment this if you are running in development
+#      - ./frontend:/home/node/app
+
+#     Uncomment this if you are running in development
     command: ["npm", "run", "dev", "--host"]
+
+#     Comment this if you are running in production
+#    command: ["npm", "run", "build"]
     ports:
-      - "3000:3000"  # Проброс порта 3000 из контейнера на хост
-    restart: always
-    env_file:
-      - ".env"
+          - "3000:3000"  # Проброс порта 3000 из контейнера на хост
+
     stop_signal: SIGINT
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
   bot:
     image: "medsyncapp_bot"
@@ -32,10 +30,12 @@ services:
       dockerfile: ./bot.Dockerfile
     volumes:
       - ./backend/src:/src/  # Volume for bot code
-      - /var/app/medsync:/src/public # Volume for static files, shared between bot and frontend
+      - /var/app/medsync:/src/public # Volume for static files, that are shared between bot and frontend
     restart: always
+
     env_file:
       - ".env"
+
     logging:
       driver: "json-file"
       options:
@@ -46,28 +46,11 @@ services:
     image: postgres:13-alpine
     ports:
       - "127.0.0.1:27077:5432"
-      # - "5439:5432" # Change if you like! 5439 is external to container
+#      - "5439:5432" # Change if you like! 5439 is external to container
     restart: always
     volumes:
       - pgdata:/var/lib/postgresql/data
-    command: >
-      postgres
-      -c max_connections=150
-      -c shared_buffers=512MB
-      -c effective_cache_size=1536MB
-      -c maintenance_work_mem=128MB
-      -c checkpoint_completion_target=0.9
-      -c wal_buffers=16MB
-      -c default_statistics_target=100
-      -c random_page_cost=1.1
-      -c effective_io_concurrency=200
-      -c work_mem=3495kB
-      -c min_wal_size=1GB
-      -c max_wal_size=4GB
-      -c max_worker_processes=2
-      -c max_parallel_workers_per_gather=1
-      -c max_parallel_workers=2
-      -c max_parallel_maintenance_workers=1
+    command: "postgres -c max_connections=150 -c shared_buffers=512MB -c effective_cache_size=1536MB -c maintenance_work_mem=128MB -c checkpoint_completion_target=0.9 -c wal_buffers=16MB -c default_statistics_target=100 -c random_page_cost=1.1 -c effective_io_concurrency=200 -c work_mem=3495kB -c min_wal_size=1GB -c max_wal_size=4GB -c max_worker_processes=2 -c max_parallel_workers_per_gather=1 -c max_parallel_workers=2 -c max_parallel_maintenance_workers=1"
     env_file:
       - '.env'
     logging:
@@ -95,6 +78,7 @@ services:
         max-size: "200k"
         max-file: "10"
 
+
   redis_cache:
     image: redis:6.2-alpine
     restart: always
@@ -114,6 +98,7 @@ services:
 #    expose:
 #      - 443
 
+
 volumes:
-  pgdata: {}
-  cache: {}
+  pgdata: { }
+  cache: { }
