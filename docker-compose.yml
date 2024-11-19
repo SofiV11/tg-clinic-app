@@ -10,6 +10,8 @@ services:
     restart: always
     env_file:
       - ".env"
+    depends_on:
+      - web  # Добавляем зависимость от сервиса web
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/"]
       interval: 30s
@@ -67,14 +69,14 @@ services:
         max-size: "200k"
         max-file: "10"
 
-  webhook:
+  web:  # Переименовываем сервис webhook в web
     image: "medsyncapp_web"
     stop_signal: SIGINT
     build:
       context: ./backend
       dockerfile: ./web.Dockerfile
     ports:
-      - "3779:8000"
+      - "3779:8080"  # Проброс порта 8080 из контейнера на хост
     volumes:
       - ./backend/src:/src
     restart: always
