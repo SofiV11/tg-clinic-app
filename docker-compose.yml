@@ -5,21 +5,13 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    working_dir: "/home/node/app"
-    volumes:
-      # Для разработки: монтируем локальную директорию frontend в контейнер
-      - ./frontend:/home/node/app
-      # Для продакшена: монтируем директорию dist (раскомментируйте, если нужно)
-      # - /var/app/medsync/:/home/node/app/dist
-    command: ["npm", "run", "dev", "--host"]
     ports:
-      - "3000:3000"  # Проброс порта 3000 из контейнера на хост
+      - "80:80"  # Проброс порта 80 из контейнера на хост
     restart: always
     env_file:
       - ".env"
-    stop_signal: SIGINT
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      test: ["CMD", "curl", "-f", "http://localhost/"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -31,8 +23,8 @@ services:
       context: ./backend
       dockerfile: ./bot.Dockerfile
     volumes:
-      - ./backend/src:/src/  # Volume for bot code
-      - /var/app/medsync:/src/public # Volume for static files, shared between bot and frontend
+      - ./backend/src:/src/
+      - /var/app/medsync:/src/public
     restart: always
     env_file:
       - ".env"
@@ -46,7 +38,6 @@ services:
     image: postgres:13-alpine
     ports:
       - "127.0.0.1:27077:5432"
-      # - "5439:5432" # Change if you like! 5439 is external to container
     restart: always
     volumes:
       - pgdata:/var/lib/postgresql/data
