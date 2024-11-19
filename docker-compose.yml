@@ -6,14 +6,14 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3000:80"
     restart: always
     env_file:
       - ".env"
     depends_on:
       - web  # Добавляем зависимость от сервиса web
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/3000"]
+      test: ["CMD", "curl", "-f", "http://localhost/"]
       interval: 30s
       timeout: 10s
       retries: 3
