@@ -1,14 +1,14 @@
-FROM node:18
+# Используем официальный образ Nginx на базе Alpine Linux для легковесности
+FROM nginx:stable-alpine
 
-WORKDIR /home/node/app
+# Удаляем стандартный сайт Nginx
+RUN rm -rf /usr/share/nginx/html/*
 
-COPY package*.json ./
+# Копируем ваши статические файлы в директорию, обслуживаемую Nginx
+COPY . /usr/share/nginx/html
 
-RUN npm install
+# Открываем порт 80 для доступа к приложению
+EXPOSE 80
 
-COPY . .
-
-
-# Опционально: документирует, что приложение слушает на порту 3000
-# EXPOSE 3000
-
+# Запускаем Nginx в форграунд режиме
+CMD ["nginx", "-g", "daemon off;"]
