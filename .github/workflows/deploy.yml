@@ -10,10 +10,10 @@ name: Deploy to Server
 on:
   workflow_dispatch:
     inputs:
-      environment:
-        description: 'Deployment Environment'
-        required: true
-        default: 'production'
+#      environment:
+#        description: 'Deployment Environment'
+#        required: true
+#        default: 'production'
       # Вы можете добавить другие входные параметры по необходимости
 
 jobs:
